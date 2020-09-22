@@ -70,6 +70,7 @@ async def study_tips(ctx):
     res=['Gol kar pi lo','If you don\'t study properly then exam la kozhi mutta',
               'Improve your 60-40 to study well.','Govindaaa govinda']
     await ctx.send(f'{random.choice(res)}')
+    
 
 client.run('NzU3NTE3MzI5NTU4MTQzMDI4.X2hi_Q.RI17Ys2Bgcz-qUn-BCIZNSQyoH8')
 
