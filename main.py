@@ -14,6 +14,11 @@ async def on_ready():
 
 @client.remove_command('help')
 
+@client.event
+async def on_member_join(ctx, *,member:discord.Member):
+    await ctx.send(f'{member}, welcome to our humble server')
+
+
 @client.command()
 async def creeper(ctx):
     await ctx.send('Aw Man!')
