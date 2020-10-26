@@ -6,6 +6,8 @@ from itertools import  cycle
 
 client= commands.Bot(command_prefix='*')
 stat= cycle(['Studying muhavre','Studying shubdh aur padh','Contemplating my 60-40 level',])
+member=discord.Member
+welcome= f'Welcome to our humble server {member}'
 
 @client.event
 async def on_ready():
@@ -13,11 +15,6 @@ async def on_ready():
     await client.change_presence(status=discord.Status.dnd,activity=discord.Game('Use * as prefix'))
 
 @client.remove_command('help')
-
-@client.event
-async def on_member_join(ctx, *,member:discord.Member):
-    await ctx.send(f'{member}, welcome to our humble server')
-
 
 @client.command()
 async def creeper(ctx):
@@ -77,5 +74,5 @@ async def study_tips(ctx):
     await ctx.send(f'{random.choice(res)}')
     
 
-client.run('NzU3NTE3MzI5NTU4MTQzMDI4.X2hi_Q.RI17Ys2Bgcz-qUn-BCIZNSQyoH8')
+client.run('NzU3NTE3MzI5NTU4MTQzMDI4.X2hi_Q.oXnEon2lk2hQvRMAAe_5VFYn-9g')
 
