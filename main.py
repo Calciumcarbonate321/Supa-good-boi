@@ -2,25 +2,30 @@ import discord
 from discord.ext import commands, tasks
 import random
 import time
-from itertools import  cycle
+import asyncio
 
 client= commands.Bot(command_prefix='*')
-stat= cycle(['Studying muhavre','Studying shubdh aur padh','Contemplating my 60-40 level',])
-member=discord.Member
-welcome= f'Welcome to our humble server {member}'
+
 
 @client.event
 async def on_ready():
     print("I am born ready")
-    await client.change_presence(status=discord.Status.dnd,activity=discord.Game('Use * as prefix'))
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="you"))
 
 @client.remove_command('help')
 
-@client.command()
+@client.event #on_member_join
+async def on_member_join(member):
+    for channel in member.guild.channels:
+        if str(channel) == "general":
+            await channel.send_message(f"""Welcome to the server {member.mention}""")
+
+@client.command() #creeper
 async def creeper(ctx):
     await ctx.send('Aw Man!')
 
-@client.command(aliases=['ouija','ouija board','Ouija'])
+
+@client.command(aliases=['ouija','ouija board','Ouija']) #ouija_board
 async def ouija_board(ctx, *,question):
     responses=["It is certain.",
                "It is decidedly so.",
@@ -45,34 +50,56 @@ async def ouija_board(ctx, *,question):
     await ctx.send('This must be a yes or no question or else do not ask me about the answer.')
     await ctx.send(f'Question you asked:{question} \n My Answer:{random.choice(responses)}')
 
-@client.command(aliases=['60-40'])
-async def _6040status(ctx):
-    x=random.randint(0,100)
-    if x<50:
-        await ctx.send('Your 60-40 is not good. \n Tell some muhavre to improve your 60-40 ')
-    else:
-        await ctx.send('Your 60-40 is good.')
 
-@client.command()
+
+@client.command() #help command
 async def help(ctx):
     await ctx.send("""```List of commands:
     (1)*ouija [your question]
-         This will tell an answer to your yes or no question
-    (2)*60-40                                               
-        This will check your 60-40.
-    (3)*study_tips                                                              
-        This will tell you about your exam. It can be a tip or a prediction.```""")
+         This will tell an answer to your yes or no question```""")
 
-@client.command(aliases=['Namaste','Namaste Ji'])
-async def namaste(ctx):
-    await ctx.send('Namaste beta')
+@client.command(name='say') #say command
+async def say(ctx, thing:str, channel_id: int):
+    if ctx.author.id==437163344525393920:
+        channel=client.get_channel(int(channel_id))
+        await channel.send(thing)
 
-@client.command(aliases=['study tips'])
-async def study_tips(ctx):
-    res=['Gol kar pi lo','If you don\'t study properly then exam la kozhi mutta',
-              'Improve your 60-40 to study well.','Govindaaa govinda']
-    await ctx.send(f'{random.choice(res)}')
-    
+snipe_message_content = None
+snipe_message_author = None
 
-client.run('NzU3NTE3MzI5NTU4MTQzMDI4.X2hi_Q.oXnEon2lk2hQvRMAAe_5VFYn-9g')
+@client.event #snipe_command_pre-requisite
+async def on_message_delete(message):
 
+    global snipe_message_content
+    global snipe_message_author
+
+    snipe_message_content = message.content
+    snipe_message_author = message.author.name
+    await asyncio.sleep(60)
+    snipe_message_author = None
+    snipe_message_content = None
+
+
+
+@client.command()
+async def test(ctx):
+    await ctx.send("Yes I am online.")
+
+@client.command() #snipe_command
+async def snipe(message):
+    if snipe_message_content==None:
+        await message.channel.send("Theres nothing to snipe.")
+    else:
+        embed = discord.Embed(description=f"{snipe_message_content}")
+        embed.set_footer(text=f"Asked by {message.author.name}#{message.author.discriminator}", icon_url=message.author.avatar_url)
+        embed.set_author(name= f"{snipe_message_author}")
+        await message.channel.send(embed=embed)
+        return
+
+@client.command(name="clear")
+async def clear(ctx,amount: int):
+    await ctx.channel.purge(limit=amount+1)
+
+
+
+client.run('token')
