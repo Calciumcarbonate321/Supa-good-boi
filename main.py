@@ -114,4 +114,4 @@ async def on_message(message):
 
 load_dotenv('token.env')
 
-client.run(os.getenv('DISCORD_TOKEN')
+client.run(os.getenv('DISCORD_TOKEN'))
