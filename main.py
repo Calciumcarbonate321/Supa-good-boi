@@ -3,6 +3,7 @@ from discord.ext import commands, tasks
 import random
 import time
 import asyncio
+import os
 
 client= commands.Bot(command_prefix='*')
 
@@ -111,4 +112,6 @@ async def on_message(message):
         await message.channel.send(response)
     await client.process_commands(message)
 
-client.run('NzU3NTE3MzI5NTU4MTQzMDI4.X2hi_Q.nsGWnFjiNjab7MX_9ESt6zUF5oc')
+load_dotenv('token.env')
+
+client.run(os.getenv('DISCORD_TOKEN')
