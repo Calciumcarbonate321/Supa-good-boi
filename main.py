@@ -100,6 +100,15 @@ async def snipe(message):
 async def clear(ctx,amount: int):
     await ctx.channel.purge(limit=amount+1)
 
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
 
+    ar = ['f']
+    if message.content == 'f':
+        response = ar[0]
+        await message.channel.send(response)
+    await client.process_commands(message)
 
-client.run('token')
+client.run('NzU3NTE3MzI5NTU4MTQzMDI4.X2hi_Q.nsGWnFjiNjab7MX_9ESt6zUF5oc')
