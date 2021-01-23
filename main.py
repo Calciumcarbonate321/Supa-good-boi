@@ -4,9 +4,11 @@ import random
 import time
 import asyncio
 import os
+from dotenv import load_dotenv
 
 client= commands.Bot(command_prefix='*')
 
+load_dotenv('.env')
 
 @client.event
 async def on_ready():
@@ -112,6 +114,5 @@ async def on_message(message):
         await message.channel.send(response)
     await client.process_commands(message)
 
-load_dotenv('token.env')
-
-client.run(os.getenv('DISCORD_TOKEN'))
+token=os.getenv('DISCORD_TOKEN')
+client.run(token)
