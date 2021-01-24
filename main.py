@@ -7,7 +7,7 @@ import os
 from dotenv import load_dotenv
 
 client = commands.Bot(command_prefix='*')
-
+ar=True
 @client.event
 async def on_ready():
     print("I am born ready")
@@ -104,6 +104,18 @@ async def snipe(message):
 async def clear(ctx, amount: int):
     await ctx.channel.purge(limit=amount + 1)
 
+@client.command(aliases=['ar','Ar','AR','auto-response','autoresponse'])
+async def ar_toggle(ctx,* ,toggle,):
+    turn_on=['on','On','True','true','T','t']
+    turn_off=['off','Off','false','False','F','f']
+    if toggle in turn_on:
+        ar=True
+        await ctx.send("Auto-response successfully turned on.")
+    if toggle in turn_off:
+        ar=False
+        await ctx.send("Auto-response successfully turned off.")
+    else:
+        await ctx.send("Next time please send a valid option dumbass.")
 
 @client.event
 async def on_message(message):
@@ -111,10 +123,19 @@ async def on_message(message):
         return
     if message.author.bot:
         return
-    ar = ['f']
-    if message.content == 'f':
-        response = ar[0]
-        await message.channel.send(response)
+    ar_ = ['f','oof','pog','poggers']
+    responses=['f','F','https://tenor.com/bkY4z.gif']
+    if message.content == 'f' or message.content=='F':
+        response = ar_[0]
+    if message.content=='oof':
+        response=responses[2]
+    if message.content in ['pog','poggers','Pog','Poggers']:
+        pog_gifs=['https://tenor.com/8kQd.gif',
+                'https://tenor.com/NqQh.gif',
+                'https://tenor.com/ZiI7.gif',
+                'https://tenor.com/blxuC.gif']
+        response=random.choice(pog_gifs)
+    await message.channel.send(response)
     await client.process_commands(message)
 
 load_dotenv('.env')
