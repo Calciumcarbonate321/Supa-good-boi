@@ -109,7 +109,8 @@ async def clear(ctx, amount: int):
 async def on_message(message):
     if message.author == client.user:
         return
-
+    if message.author.bot:
+        return
     ar = ['f']
     if message.content == 'f':
         response = ar[0]
