@@ -5,11 +5,8 @@ import time
 import asyncio
 import os
 from dotenv import load_dotenv
-from keep_alive import keep_alive
 
 client = commands.Bot(command_prefix='*')
-
-
 
 @client.event
 async def on_ready():
@@ -119,8 +116,5 @@ async def on_message(message):
         await message.channel.send(response)
     await client.process_commands(message)
 
-
-keep_alive()
-
-
+load_dotenv('.env')
 client.run(os.getenv('DISCORD_TOKEN'))
