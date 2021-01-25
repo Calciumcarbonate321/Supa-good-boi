@@ -119,24 +119,27 @@ async def ar_toggle(ctx,* ,toggle,):
 
 @client.event
 async def on_message(message):
-    if message.author == client.user:
-        return
-    if message.author.bot:
-        return
-    ar_ = ['f','oof','pog','poggers']
-    responses=['f','F','https://tenor.com/bkY4z.gif']
-    if message.content == 'f' or message.content=='F':
-        response = ar_[0]
-    if message.content=='oof':
-        response=responses[2]
-    if message.content in ['pog','poggers','Pog','Poggers']:
-        pog_gifs=['https://tenor.com/8kQd.gif',
-                'https://tenor.com/NqQh.gif',
-                'https://tenor.com/ZiI7.gif',
-                'https://tenor.com/blxuC.gif']
-        response=random.choice(pog_gifs)
-    await message.channel.send(response)
-    await client.process_commands(message)
+    try:
+        if message.author == client.user:
+            return
+        if message.author.bot:
+            return
+        ar_ = ['f','oof','pog','poggers']
+        responses=['f','F','https://tenor.com/bkY4z.gif']
+        if message.content == 'f' or message.content=='F':
+            response = ar_[0]
+        if message.content=='oof':
+            response=responses[2]
+        if message.content in ['pog','poggers','Pog','Poggers']:
+            pog_gifs=['https://tenor.com/8kQd.gif',
+                    'https://tenor.com/NqQh.gif',
+                    'https://tenor.com/ZiI7.gif',
+                    'https://tenor.com/blxuC.gif']
+            response=random.choice(pog_gifs)
+        await message.channel.send(response)
+        await client.process_commands(message)
+    except:
+        return        
 
 load_dotenv('.env')
 client.run(os.getenv('DISCORD_TOKEN'))
