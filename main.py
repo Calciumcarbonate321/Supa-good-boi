@@ -113,7 +113,7 @@ async def ar_toggle(ctx,* ,toggle,):
         await ctx.send("Next time please send a valid option dumbass.")
 
 @client.command(name="urmom")
-async def ur_mom(ctx,user : discord.Member)
+async def ur_mom(ctx,user : discord.Member):
     await ctx.send(user.mention)
 
 
