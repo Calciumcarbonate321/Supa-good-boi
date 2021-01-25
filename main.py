@@ -139,7 +139,7 @@ async def on_message(message):
         await message.channel.send(response)
         await client.process_commands(message)
     except:
-        return        
+        return
 
 load_dotenv('.env')
 client.run(os.getenv('DISCORD_TOKEN'))
