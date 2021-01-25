@@ -30,7 +30,7 @@ async def creeper(ctx):
     await ctx.send('Aw Man!')
 
 
-@client.command(aliases=['ouija', 'ouija board', 'Ouija'])  #ouija_board
+@client.command(aliases=['ouija','Ouija'])  #ouija_board
 async def ouija_board(ctx, *, question):
     responses = [
         "It is certain.", "It is decidedly so.", "Without a doubt.",
@@ -62,11 +62,8 @@ async def say(ctx, thing: str, channel_id: int):
         channel = client.get_channel(int(channel_id))
         await channel.send(thing)
 
-
 snipe_message_content = None
 snipe_message_author = None
-
-
 @client.event  #snipe_command_pre-requisite
 async def on_message_delete(message):
 
@@ -78,12 +75,6 @@ async def on_message_delete(message):
     await asyncio.sleep(60)
     snipe_message_author = None
     snipe_message_content = None
-
-
-@client.command()
-async def test(ctx):
-    await ctx.send("Yes I am online.")
-
 
 @client.command()  #snipe_command
 async def snipe(message):
@@ -104,7 +95,11 @@ async def snipe(message):
 async def clear(ctx, amount: int):
     await ctx.channel.purge(limit=amount + 1)
 
-@client.command(aliases=['ar','Ar','AR','auto-response','autoresponse'])
+@client.command()
+async def test(ctx):
+    await ctx.send("Yes I am online.")
+
+@client.command(aliases=['ar','auto-response','autoresponse'])
 async def ar_toggle(ctx,* ,toggle,):
     turn_on=['on','On','True','true','T','t']
     turn_off=['off','Off','false','False','F','f']
@@ -116,30 +111,55 @@ async def ar_toggle(ctx,* ,toggle,):
         await ctx.send("Auto-response successfully turned off.")
     else:
         await ctx.send("Next time please send a valid option dumbass.")
-
+'''
 @client.event
 async def on_message(message):
-    try:
-        if message.author == client.user:
-            return
-        if message.author.bot:
-            return
-        ar_ = ['f','oof','pog','poggers']
-        responses=['f','F','https://tenor.com/bkY4z.gif']
-        if message.content == 'f' or message.content=='F':
-            response = ar_[0]
-        if message.content=='oof':
-            response=responses[2]
-        if message.content in ['pog','poggers','Pog','Poggers']:
-            pog_gifs=['https://tenor.com/8kQd.gif',
+    if message.author == client.user:
+        return
+    if message.author.bot:
+        return
+    ar_ = ['f','oof','pog','poggers']
+    responses=['f','F','https://tenor.com/bkY4z.gif']
+    if message.content == 'f' or message.content=='F':
+        response = ar_[0]
+    if message.content=='oof':
+        response=responses[2]
+    if message.content in ['pog','poggers','Pog','Poggers']:
+        pog_gifs=['https://tenor.com/8kQd.gif',
                     'https://tenor.com/NqQh.gif',
                     'https://tenor.com/ZiI7.gif',
                     'https://tenor.com/blxuC.gif']
-            response=random.choice(pog_gifs)
-        await message.channel.send(response)
-        await client.process_commands(message)
-    except:
-        return
+        response=random.choice(pog_gifs)
+    await message.channel.send(response)
+    await client.process_commands(message)'''
 
+class auto_response(commands.Cog):
+    def __init__(self, client):
+        self.client = client
+    @commands.Cog.listener()
+    async def on_message(self,message):
+        try:
+            if message.author==client.user:
+                return
+            if message.author.bot:
+                return
+            ar_ = ['f','oof','pog','poggers']
+            responses=['f','F','https://tenor.com/bkY4z.gif']
+            if message.content == 'f' or message.content=='F':
+                response = ar_[0]
+            if message.content=='oof':
+                response=responses[2]
+            if message.content in ['pog','poggers','Pog','Poggers']:
+                pog_gifs=['https://tenor.com/8kQd.gif',
+                                'https://tenor.com/NqQh.gif',
+                                'https://tenor.com/ZiI7.gif',
+                                'https://tenor.com/blxuC.gif']
+                response=random.choice(pog_gifs)
+        except:
+            return
+        await message.channel.send(response)
+def setup(client):
+    client.add_cog(auto_response(client))
+setup(client)
 load_dotenv('.env')
 client.run(os.getenv('DISCORD_TOKEN'))
