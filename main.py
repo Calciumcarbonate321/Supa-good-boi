@@ -111,27 +111,11 @@ async def ar_toggle(ctx,* ,toggle,):
         await ctx.send("Auto-response successfully turned off.")
     else:
         await ctx.send("Next time please send a valid option dumbass.")
-'''
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
-    if message.author.bot:
-        return
-    ar_ = ['f','oof','pog','poggers']
-    responses=['f','F','https://tenor.com/bkY4z.gif']
-    if message.content == 'f' or message.content=='F':
-        response = ar_[0]
-    if message.content=='oof':
-        response=responses[2]
-    if message.content in ['pog','poggers','Pog','Poggers']:
-        pog_gifs=['https://tenor.com/8kQd.gif',
-                    'https://tenor.com/NqQh.gif',
-                    'https://tenor.com/ZiI7.gif',
-                    'https://tenor.com/blxuC.gif']
-        response=random.choice(pog_gifs)
-    await message.channel.send(response)
-    await client.process_commands(message)'''
+
+@client.command(name="urmom")
+async def ur_mom(ctx,user : discord.Member)
+    await ctx.send(user.mention)
+
 
 class auto_response(commands.Cog):
     def __init__(self, client):
