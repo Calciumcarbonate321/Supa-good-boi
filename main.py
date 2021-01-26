@@ -5,9 +5,11 @@ import time
 import asyncio
 import os
 from dotenv import load_dotenv
+import praw
 
+load_dotenv('.env')
 client = commands.Bot(command_prefix='*')
-ar=True
+client.ar=True
 @client.event
 async def on_ready():
     print("I am born ready")
@@ -23,12 +25,6 @@ async def on_member_join(member):
         if str(channel) == "general":
             await channel.send_message(
                 f"""Welcome to the server {member.mention}""")
-
-
-@client.command()  #creeper
-async def creeper(ctx):
-    await ctx.send('Aw Man!')
-
 
 @client.command(aliases=['ouija','Ouija'])  #ouija_board
 async def ouija_board(ctx, *, question):
@@ -51,9 +47,12 @@ async def ouija_board(ctx, *, question):
 
 @client.command()  #help command
 async def help(ctx):
-    await ctx.send("""```List of commands:
-    (1)*ouija [your question]
-         This will tell an answer to your yes or no question```""")
+    embed=discord.Embed(title="HELP", description="CATEGORIES", color=0x16c038)
+    embed.add_field(name="FUN", value="ouija,ghostping,snipe", inline=True)
+    embed.add_field(name="ADMIN", value="clear,auto-response", inline=True)
+    embed.add_field(name="CURRENCY", value="coming soon", inline=True)
+    embed.set_footer(text="Type *help (command name for more information on it)")
+    await ctx.send(embed=embed)
 
 
 @client.command(name='say')  #say command
@@ -100,21 +99,21 @@ async def test(ctx):
     await ctx.send("Yes I am online.")
 
 @client.command(aliases=['ar','auto-response','autoresponse'])
-async def ar_toggle(ctx,* ,toggle,):
-    turn_on=['on','On','True','true','T','t']
-    turn_off=['off','Off','false','False','F','f']
-    if toggle in turn_on:
-        ar=True
-        await ctx.send("Auto-response successfully turned on.")
-    if toggle in turn_off:
-        ar=False
-        await ctx.send("Auto-response successfully turned off.")
+async def ar_toggle(ctx,* ,toggle : bool):
+    if toggle is True:
+        client.ar=True
+        await ctx.send("Auto-response set to True.")
+    elif toggle is False:
+        client.ar=False
+        await ctx.send("Auto-response set to False.")
     else:
-        await ctx.send("Next time please send a valid option dumbass.")
+        await ctx.send("Please enter a valid option.")
 
-@client.command(name="urmom")
+@client.command(aliases=['gp','ghostping'])
 async def ur_mom(ctx,user : discord.Member):
     await ctx.send(user.mention)
+    await ctx.channel.purge(limit=2)
+
 
 
 class auto_response(commands.Cog):
@@ -123,27 +122,62 @@ class auto_response(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self,message):
         try:
-            if message.author==client.user:
+            if client.ar is True:
+                if message.author==client.user:
+                    return
+                if message.author.bot:
+                    return
+                ar_ = ['f','oof','pog','poggers']
+                responses=['f','F','https://tenor.com/bkY4z.gif']
+                if message.content == 'f' or message.content=='F':
+                    response = ar_[0]
+                if message.content=='oof':
+                    response=responses[2]
+                if message.content in ['pog','poggers','Pog','Poggers']:
+                    pog_gifs=['https://tenor.com/8kQd.gif',
+                                        'https://tenor.com/NqQh.gif',
+                                        'https://tenor.com/ZiI7.gif',
+                                        'https://tenor.com/blxuC.gif']
+                    response=random.choice(pog_gifs)
+                if message.content=='creeper':
+                    response='Aw man!'
+                await message.channel.send(response)
+            else:
                 return
-            if message.author.bot:
-                return
-            ar_ = ['f','oof','pog','poggers']
-            responses=['f','F','https://tenor.com/bkY4z.gif']
-            if message.content == 'f' or message.content=='F':
-                response = ar_[0]
-            if message.content=='oof':
-                response=responses[2]
-            if message.content in ['pog','poggers','Pog','Poggers']:
-                pog_gifs=['https://tenor.com/8kQd.gif',
-                                'https://tenor.com/NqQh.gif',
-                                'https://tenor.com/ZiI7.gif',
-                                'https://tenor.com/blxuC.gif']
-                response=random.choice(pog_gifs)
         except:
-            return
-        await message.channel.send(response)
+            pass
 def setup(client):
     client.add_cog(auto_response(client))
+
+reddit = praw.Reddit(client_id = os.getenv('clientid'),
+client_secret = os.getenv('clientsec'),
+username = os.getenv('reduser'),
+password = os.getenv('redpas'),
+user_agent = "pogman")
+
+@client.command(name='meme')
+async def meme(ctx,subreddit = "memes"):
+
+  subreddit = reddit.subreddit("memes")
+  all_subs = []
+
+  top = subreddit.top(limit = 100)
+  for submission in top:
+    all_subs.append(submission)
+
+  random_sub = random.choice(all_subs)
+
+  name = random_sub.title
+  url = random_sub.url
+  likes = random_sub.score
+
+  em = discord.Embed(title = name)
+  em.set_image(url = url)
+  em.set_footer(text= "This post has 🔺" + str(likes) + " Upvotes" )
+  await ctx.send(embed = em)
+
+
 setup(client)
-load_dotenv('.env')
+
+
 client.run(os.getenv('DISCORD_TOKEN'))
