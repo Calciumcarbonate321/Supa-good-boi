@@ -6,16 +6,21 @@ import asyncio
 import os
 from dotenv import load_dotenv
 import praw
+import itertools
+import aiohttp
+import json
 
 load_dotenv('.env')
+
 client = commands.Bot(command_prefix='*')
 client.ar=True
+
 @client.event
 async def on_ready():
     print("I am born ready")
     await client.change_presence(
         activity=discord.Activity(
-            type=discord.ActivityType.watching, name="you"))
+            type=discord.ActivityType.watching, name="you",url=""))
 
 
 @client.remove_command('help')
@@ -52,7 +57,6 @@ async def help(ctx):
     embed.add_field(name="ADMIN", value="clear,auto-response", inline=True)
     embed.add_field(name="CURRENCY", value="coming soon", inline=True)
     embed.set_footer(text="Type *help (command name for more information on it)")
-    await ctx.send(embed=embed)
 
 
 @client.command(name='say')  #say command
@@ -146,38 +150,86 @@ class auto_response(commands.Cog):
                 return
         except:
             pass
+
+
+'''
+class memer(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+        self.reddit = None
+        if clientid and clientsec:
+            self.reddit=praw.Reddit(client_id = os.getenv('clientid'),
+            client_secret = os.getenv('clientsec'),
+            username = os.getenv('reduser'),
+            password = os.getenv('redpas'),
+            user_agent = "pogman")
+        @commands.Cog.command()
+        async def meme(ctx,subreddit = "memes"):
+            subreddit = reddit.subreddit("memes")
+            all_subs = []
+            top = subreddit.hot(limit = 100)
+            for submission in top:
+                all_subs.append(submission)
+                random_sub = random.choice(all_subs)
+                name = random_sub.title
+                url = random_sub.url
+                likes = random_sub.score
+                em = discord.Embed(title = name,url=f"{url}")
+                em.set_image(url = url)
+                em.set_footer(text= "This post has 🔺" + str(likes) + " Upvotes" )
+            await ctx.send(embed = em)'''
+
+
+
+@client.command(name='meme')
+async def meme(ctx):
+    embed = discord.Embed(title="Meme", description=None)
+    async with aiohttp.ClientSession() as cs:
+        async with cs.get('https://www.reddit.com/r/memes/new.json?sort=hot') as r:
+            res = await r.json()
+            embed.set_image(url=res['data']['children'] [random.randint(0,1)]['data']['url'])
+            embed.set_footer(text="r/memes")
+            await ctx.send(embed=embed, content=None)
+
+@client.command(name='poll')
+async def poll(ctx, question,channelid : int, option1=None, option2=None):
+    channel = client.get_channel(int(channelid))
+    if option1==None and option2==None:
+        await ctx.channel.purge(limit=1)
+        embed = discord.Embed(title=f"{question}", url="https://youtu.be/dQw4w9WgXcQ")
+        embed.add_field(name="Yes",value="✅",inline=True)
+        embed.add_field(name="No",value="❎",inline=True)
+        sent= await channel.send(embed=embed)
+        await sent.add_reaction('✅')
+        await sent.add_reaction('❎')
+    elif option2!=None:
+        await ctx.channel.purge(limit=1)
+        embed = discord.Embed(title=f"{question}", url="https://youtu.be/dQw4w9WgXcQ")
+        embed.add_field(name="Yes",value="✅",inline=True)
+        embed.add_field(name=f"{option2}",value="❎",inline=True)
+        sent= await channel.send(embed=embed)
+        await sent.add_reaction('✅')
+        await sent.add_reaction('❎')
+    elif option1!=None:
+        await ctx.channel.purge(limit=1)
+        embed = discord.Embed(title=f"{question}", url="https://youtu.be/dQw4w9WgXcQ")
+        embed.add_field(name=f"{option1}",value="✅",inline=True)
+        embed.add_field(name="No",value="❎",inline=True)
+        sent= await channel.send(embed=embed)
+        await sent.add_reaction('✅')
+        await sent.add_reaction('❎')
+    else:
+        await ctx.channel.purge(limit=1)
+        embed = discord.Embed(title=f"{question}", url="https://youtu.be/dQw4w9WgXcQ")
+        embed.add_field(name=f"{option1}",value="✅",inline=True)
+        embed.add_field(name=f"{option2}",value="❎",inline=True)
+        sent= await channel.send(embed=embed)
+        await sent.add_reaction('✅')
+        await sent.add_reaction('❎')
+
 def setup(client):
     client.add_cog(auto_response(client))
 
-reddit = praw.Reddit(client_id = os.getenv('clientid'),
-client_secret = os.getenv('clientsec'),
-username = os.getenv('reduser'),
-password = os.getenv('redpas'),
-user_agent = "pogman")
-
-@client.command(name='meme')
-async def meme(ctx,subreddit = "memes"):
-
-  subreddit = reddit.subreddit("memes")
-  all_subs = []
-
-  top = subreddit.top(limit = 100)
-  for submission in top:
-    all_subs.append(submission)
-
-  random_sub = random.choice(all_subs)
-
-  name = random_sub.title
-  url = random_sub.url
-  likes = random_sub.score
-
-  em = discord.Embed(title = name)
-  em.set_image(url = url)
-  em.set_footer(text= "This post has 🔺" + str(likes) + " Upvotes" )
-  await ctx.send(embed = em)
-
-
 setup(client)
-
 
 client.run(os.getenv('DISCORD_TOKEN'))
