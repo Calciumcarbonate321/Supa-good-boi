@@ -15,6 +15,7 @@ load_dotenv('.env')
 client = commands.Bot(command_prefix='*')
 client.ar=True
 
+
 @client.event
 async def on_ready():
     print("I am born ready")
