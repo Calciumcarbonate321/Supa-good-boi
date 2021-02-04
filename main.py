@@ -31,6 +31,7 @@ async def on_member_join(member):
             await channel.send_message(
                 f"""Welcome to the server {member.mention}""")
 
+
 @client.command(aliases=['ouija','Ouija'])  #ouija_board
 async def ouija_board(ctx, *, question):
     responses = [
@@ -125,6 +126,13 @@ class auto_response(commands.Cog):
         self.client = client
     @commands.Cog.listener()
     async def on_message(self,message):
+        sad_words=["sad", "depressed", "unhappy", "miserable"]
+        starter_encouragements = [
+                                  "Cheer up!",
+                                  "Hang in there.",
+                                  "You are a great person !",
+                                  "Everything will be fine soon, don't worry"]
+        dead=['died','rip']
         try:
             if client.ar is True:
                 if message.author==client.user:
@@ -133,16 +141,21 @@ class auto_response(commands.Cog):
                     return
                 ar_ = ['f','oof','pog','poggers']
                 responses=['f','F','https://tenor.com/bkY4z.gif']
-                if message.content == 'f' or message.content=='F':
+                if message.content == 'f' or message.content=='F'or any(w in message.content for w in dead):
                     response = ar_[0]
-                if message.content=='oof':
+                if message.content in ['oof','Oof','I died']:
                     response=responses[2]
+                if message.content in ['bruh','Bruh','BRUH']:
+                    response='Bruh'
                 if message.content in ['pog','poggers','Pog','Poggers']:
                     pog_gifs=['https://tenor.com/8kQd.gif',
                                         'https://tenor.com/NqQh.gif',
                                         'https://tenor.com/ZiI7.gif',
                                         'https://tenor.com/blxuC.gif']
                     response=random.choice(pog_gifs)
+                if any(word in message.content for word in sad_words):
+                    response=random.choice(starter_encouragements)
+
                 if message.content=='creeper':
                     response='Aw man!'
                 await message.channel.send(response)
@@ -202,7 +215,7 @@ async def poll(ctx, question,channelid : int, option1=None, option2=None):
         sent= await channel.send(embed=embed)
         await sent.add_reaction('✅')
         await sent.add_reaction('❎')
-    elif option2!=None:
+    elif option2!=None and option1== None :
         await ctx.channel.purge(limit=1)
         embed = discord.Embed(title=f"{question}", url="https://youtu.be/dQw4w9WgXcQ")
         embed.add_field(name="Yes",value="✅",inline=True)
@@ -210,7 +223,7 @@ async def poll(ctx, question,channelid : int, option1=None, option2=None):
         sent= await channel.send(embed=embed)
         await sent.add_reaction('✅')
         await sent.add_reaction('❎')
-    elif option1!=None:
+    elif option1!=None and option2==None:
         await ctx.channel.purge(limit=1)
         embed = discord.Embed(title=f"{question}", url="https://youtu.be/dQw4w9WgXcQ")
         embed.add_field(name=f"{option1}",value="✅",inline=True)
