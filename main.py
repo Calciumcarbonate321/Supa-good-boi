@@ -131,7 +131,9 @@ class auto_response(commands.Cog):
                                   "Cheer up!",
                                   "Hang in there.",
                                   "You are a great person !",
-                                  "Everything will be fine soon, don't worry"]
+                                  "Everything will be fine soon, don't worry",
+
+                                  ]
         dead=['died','rip']
         try:
             if client.ar is True:
