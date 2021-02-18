@@ -16,6 +16,7 @@ client = commands.Bot(command_prefix='*')
 client.ar=True
 
 
+
 @client.event
 async def on_ready():
     print("I am born ready")
@@ -52,14 +53,22 @@ async def ouija_board(ctx, *, question):
     )
 
 
-@client.command()  #help command
+@client.group(invoke_without_command=True)
 async def help(ctx):
-    embed=discord.Embed(title="HELP", description="CATEGORIES", color=0x16c038)
-    embed.add_field(name="FUN", value="ouija,ghostping,snipe", inline=True)
-    embed.add_field(name="ADMIN", value="clear,auto-response", inline=True)
-    embed.add_field(name="CURRENCY", value="coming soon", inline=True)
-    embed.set_footer(text="Type *help (command name for more information on it)")
+    em=discord.Embed(title="`HELP`",url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",description="`Use *help <command> to get more information on a commamd.`")
 
+    em.add_field(name="`Fun`",value="ouija,meme",inline=True)
+    em.add_field(name="`Moderation`",value="clear,ar",inline=True)
+    em.add_field(name="`TO PISS OF PEOPLE`",value="snipe",inline=True)
+
+    await ctx.send(embed=em)
+
+@help.command()
+async def ouija(ctx):
+    em=discord.Embed(title="`OUIJA`",url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",description="`This one takes in a question from the user and gives an answer.`")
+    em.add_field(name="`Syntax`",value="*ouija <question>")
+    em.add_field(name="`Aliases`",value="Ouija,ouija")
+    await ctx.send(embed=em)
 
 @client.command(name='say')  #say command
 async def say(ctx, thing: str, channel_id: int):
@@ -101,8 +110,8 @@ async def clear(ctx, amount: int):
     await ctx.channel.purge(limit=amount + 1)
 
 @client.command()
-async def test(ctx):
-    await ctx.send("Yes I am online.")
+async def ping(ctx):
+    await ctx.send("Pong")
 
 @client.command(aliases=['ar','auto-response','autoresponse'])
 async def ar_toggle(ctx,* ,toggle : bool):
@@ -115,10 +124,11 @@ async def ar_toggle(ctx,* ,toggle : bool):
     else:
         await ctx.send("Please enter a valid option.")
 
+'''
 @client.command(aliases=['gp','ghostping'])
 async def ur_mom(ctx,user : discord.Member):
     await ctx.send(user.mention)
-    await ctx.channel.purge(limit=2)
+    await ctx.channel.purge(limit=2)'''
 
 
 
@@ -166,35 +176,6 @@ class auto_response(commands.Cog):
                 return
         except:
             pass
-
-
-'''
-class memer(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
-        self.reddit = None
-        if clientid and clientsec:
-            self.reddit=praw.Reddit(client_id = os.getenv('clientid'),
-            client_secret = os.getenv('clientsec'),
-            username = os.getenv('reduser'),
-            password = os.getenv('redpas'),
-            user_agent = "pogman")
-        @commands.Cog.command()
-        async def meme(ctx,subreddit = "memes"):
-            subreddit = reddit.subreddit("memes")
-            all_subs = []
-            top = subreddit.hot(limit = 100)
-            for submission in top:
-                all_subs.append(submission)
-                random_sub = random.choice(all_subs)
-                name = random_sub.title
-                url = random_sub.url
-                likes = random_sub.score
-                em = discord.Embed(title = name,url=f"{url}")
-                em.set_image(url = url)
-                em.set_footer(text= "This post has 🔺" + str(likes) + " Upvotes" )
-            await ctx.send(embed = em)'''
-
 
 
 @client.command(name='meme')
