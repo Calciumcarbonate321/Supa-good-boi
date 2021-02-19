@@ -15,8 +15,6 @@ load_dotenv('.env')
 client = commands.Bot(command_prefix='*')
 client.ar=True
 
-
-
 @client.event
 async def on_ready():
     print("I am born ready")
@@ -24,85 +22,41 @@ async def on_ready():
         activity=discord.Activity(
             type=discord.ActivityType.watching, name="you",url=""))
 
+@client.command()
+async def load(ctx,ext):
+    try:
+        client.load_extension(f"cogs.{ext}")
+        await ctx.send(f"{ext} cog successfully loaded.")
+    except:
+        await ctx.send(f"{ext} is not a valid cog name.")
 
-@client.remove_command('help')
-@client.event  #on_member_join
-async def on_member_join(member):
-    for channel in member.guild.channels:
-        if str(channel) == "general":
-            await channel.send_message(
-                f"""Welcome to the server {member.mention}""")
 
 
-@client.command(aliases=['ouija','Ouija'])  #ouija_board
-async def ouija_board(ctx, *, question):
-    responses = [
-        "It is certain.", "It is decidedly so.", "Without a doubt.",
-        "Yes - definitely.", "You may rely on it.", "As I see it, yes.",
-        "Most likely.", "Outlook good.", "Yes.", "Signs point to yes.",
-        "Reply hazy, try again.", "Ask again later.",
-        "Better not tell you now.", "Cannot predict now.",
-        "Concentrate and ask again.", "Don't count on it.", "My reply is no.",
-        "My sources say no.", "Outlook not so good.", "Very doubtful."
+@client.command()
+async def unload(ctx,ext):
+    try:
+        client.unload_extension(f"cogs.{ext}")
+        await ctx.send(f"{ext} cog successfully unloaded.")
+    except:
+        await ctx.send(f"{ext} is not a valid cog name.")
+
+
+def load_cogs():
+    cogs=[
+        "cogs.Info.help",
+        "cogs.fun.ouija",
+        "cogs.Info.special_ones",
+        "cogs.Info.mod"
     ]
-    await ctx.send(
-        'This must be a yes or no question or else do not ask me about the answer.'
-    )
-    await ctx.send(
-        f'Question you asked:{question} \n My Answer:{random.choice(responses)}'
-    )
+    for i in cogs:
+        client.load_extension(i)
 
 
-@client.group(invoke_without_command=True)
-async def help(ctx):
-    em=discord.Embed(title="`HELP`",url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",description="`Use *help <command> to get more information on a commamd.`")
-
-    em.add_field(name="`Fun`",value="ouija,meme",inline=True)
-    em.add_field(name="`Moderation`",value="clear,ar",inline=True)
-    em.add_field(name="`TO PISS OF PEOPLE`",value="snipe",inline=True)
-
-    await ctx.send(embed=em)
-
-@help.command()
-async def ouija(ctx):
-    em=discord.Embed(title="`OUIJA`",url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",description="`This one takes in a question from the user and gives an answer.`")
-    em.add_field(name="`Syntax`",value="*ouija <question>")
-    em.add_field(name="`Aliases`",value="Ouija,ouija")
-    await ctx.send(embed=em)
-
-@client.command(name='say')  #say command
+@commands.command()
 async def say(ctx, thing: str, channel_id: int):
     if ctx.author.id == 437163344525393920:
         channel = client.get_channel(int(channel_id))
         await channel.send(thing)
-
-snipe_message_content = None
-snipe_message_author = None
-@client.event  #snipe_command_pre-requisite
-async def on_message_delete(message):
-
-    global snipe_message_content
-    global snipe_message_author
-
-    snipe_message_content = message.content
-    snipe_message_author = message.author.name
-    await asyncio.sleep(60)
-    snipe_message_author = None
-    snipe_message_content = None
-
-@client.command()  #snipe_command
-async def snipe(message):
-    if snipe_message_content == None:
-        await message.channel.send("Theres nothing to snipe.")
-    else:
-        embed = discord.Embed(description=f"{snipe_message_content}")
-        embed.set_footer(
-            text=
-            f"Asked by {message.author.name}#{message.author.discriminator}",
-            icon_url=message.author.avatar_url)
-        embed.set_author(name=f"{snipe_message_author}")
-        await message.channel.send(embed=embed)
-        return
 
 
 @client.command(name="clear")
@@ -228,5 +182,5 @@ def setup(client):
     client.add_cog(auto_response(client))
 
 setup(client)
-
+load_cogs()
 client.run(os.getenv('DISCORD_TOKEN'))
