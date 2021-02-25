@@ -33,6 +33,10 @@ class special_ones(commands.Cog):
             embed.set_author(name=f"{snipe_message_author}")
             await message.channel.send(embed=embed)
             return
+    @commands.command()
+    async def prenk(self,ctx,user : discord.Member):
+        await ctx.send(user.mention)
+        await ctx.channel.purge(limit=2)
 
 def setup(client):
     client.add_cog(special_ones(client))
