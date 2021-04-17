@@ -38,5 +38,10 @@ class special_ones(commands.Cog):
         await ctx.send(user.mention)
         await ctx.channel.purge(limit=2)
 
+    @commands.command()
+    async def invite(self,ctx):
+        embed=discord.Embed(title="My invite link")
+        embed.add_field(name="Invite link",value="https://discord.com/api/oauth2/authorize?client_id=757517329558143028&permissions=0&scope=bot%20applications.commands")
+        await ctx.send(embed=embed)
 def setup(client):
     client.add_cog(special_ones(client))

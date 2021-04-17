@@ -1,24 +1,25 @@
 from logging import exception
 from aiohttp.helpers import TOKEN
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 import random
 import time
 import asyncio
 import os
 from discord.ext.commands.core import is_owner
 from discord.ext.commands.errors import NotOwner
+from discord.flags import Intents
 from dotenv import load_dotenv
 import praw
 import itertools
 import aiohttp
 import json
-import time
+from discord_slash import SlashCommand
 
 load_dotenv('.env')
 
 client = commands.Bot(command_prefix='*')
-
+slash=SlashCommand(client,sync_commands=True)
 
 @client.event
 async def on_ready():
@@ -26,6 +27,11 @@ async def on_ready():
     await client.change_presence(
         activity=discord.Activity(
             type=discord.ActivityType.watching, name="you",url=""))
+
+@slash.slash(name="shelp")
+async def shelp(ctx):
+    await ctx.respond()
+    await ctx.send("My prefix is *. Type *help for more information about me")
 
 @client.command()
 @is_owner()
@@ -53,23 +59,24 @@ def load_cogs():
         "cogs.Info.special_ones",
         "cogs.Info.mod",
         "cogs.Info.ar",
-        "cogs.Info.poll"
+        "cogs.Info.poll",
+        "cogs.Info.eval"
     ]
     for i in cogs:
         client.load_extension(i)
-client.load_extension('jishaku')     
 
 
-@commands.command()
+@client.command()
 async def say(ctx, thing: str, channel_id: int):
     if ctx.author.id == 437163344525393920:
         channel = client.get_channel(int(channel_id))
         await channel.send(thing)
 
-
 @client.command()
 async def ping(ctx):
-    await ctx.send("Pong")
+    embed=discord.Embed(title="Bot latency")
+    embed.add_field(name="Pinged successfully",value='Latency: {0}'.format(client.latency*1000))
+    await ctx.send(embed=embed)
 
 @client.command()
 @is_owner()
@@ -91,6 +98,7 @@ async def meme(ctx):
             embed.set_image(url=res['data']['children'] [random.randint(0,1)]['data']['url'])
             embed.set_footer(text="r/memes")
             await ctx.send(embed=embed, content=None)
+
 
 
 load_cogs()
